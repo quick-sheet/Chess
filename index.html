@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chess</title>
+<meta name="description" content="Chess for kids and grown-ups. Play a friend or the computer at five levels.">
+<meta name="theme-color" content="#F6F2E9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chess">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap">
+<style>
+/* Daylight is the default; the six night themes follow the house set */
+:root {
+  --bg: #F6F2E9; --raise: #FFFFFF; --raise-2: #ECE5D7;
+  --line: rgba(74, 56, 28, .10); --line-2: rgba(74, 56, 28, .20);
+  --ink: #2A231A; --ink-2: #5F5444; --ink-3: #8C806D;
+  --sun: #C94A17; --sun-soft: rgba(201, 74, 23, .13); --on-sun: #FFFFFF;
+  --sq-l: #EFEBD3; --sq-d: #7FA65B; --hl: rgba(255, 199, 64, .58); --mark: rgba(30, 40, 18, .26);
+  --pwf: #FFFDF8; --pwl: #2E271E; --pbf: #2F2A25; --pbl: #15120E;
+  --safe: #1C9A52; --risk: #DC3A32; --backdrop: rgba(40, 30, 15, .42);
+  --sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+:root[data-theme="twilight"] {
+  --bg: #0F1528; --raise: #161E37; --raise-2: #1D2645; --line: rgba(205, 214, 245, .09); --line-2: rgba(205, 214, 245, .17);
+  --ink: #ECE8DF; --ink-2: #A3ABC2; --ink-3: #6E7794; --sun: #F2C063; --sun-soft: rgba(242, 192, 99, .17); --on-sun: #1D1505;
+  --sq-l: #B6BED8; --sq-d: #5C6893; --hl: rgba(242, 192, 99, .5); --mark: rgba(8, 12, 30, .34);
+  --pwf: #F7F4EC; --pwl: #151A2C; --pbf: #1A2033; --pbl: #98A2C4; --backdrop: rgba(4, 6, 14, .62); color-scheme: dark;
+}
+:root[data-theme="red"] {
+  --bg: #0C0404; --raise: #160707; --raise-2: #1F0A0A; --line: rgba(255, 90, 70, .12); --line-2: rgba(255, 90, 70, .22);
+  --ink: #E2573F; --ink-2: #A9412F; --ink-3: #74291F; --sun: #FF5B3D; --sun-soft: rgba(255, 91, 61, .18); --on-sun: #1A0503;
+  --sq-l: #6E261C; --sq-d: #3B110C; --hl: rgba(255, 91, 61, .38); --mark: rgba(0, 0, 0, .4);
+  --pwf: #FF6B4E; --pwl: #2A0805; --pbf: #140403; --pbl: #E2573F; --safe: #3FA35F; --risk: #FF3B2E; --backdrop: rgba(6, 1, 1, .66); color-scheme: dark;
+}
+:root[data-theme="amber"] {
+  --bg: #0D0904; --raise: #171008; --raise-2: #20170C; --line: rgba(255, 190, 110, .10); --line-2: rgba(255, 190, 110, .20);
+  --ink: #EBC48A; --ink-2: #A98A5C; --ink-3: #6F5A3B; --sun: #FFB04A; --sun-soft: rgba(255, 176, 74, .18); --on-sun: #1A0F02;
+  --sq-l: #C49A62; --sq-d: #77522B; --hl: rgba(255, 176, 74, .5); --mark: rgba(20, 10, 0, .38);
+  --pwf: #FFF2DB; --pwl: #1C1206; --pbf: #1E1407; --pbl: #C9A577; --backdrop: rgba(6, 4, 1, .64); color-scheme: dark;
+}
+:root[data-theme="sea"] {
+  --bg: #06121A; --raise: #0B1C26; --raise-2: #102632; --line: rgba(150, 220, 230, .09); --line-2: rgba(150, 220, 230, .18);
+  --ink: #D6E9EC; --ink-2: #8EAEB4; --ink-3: #5A7880; --sun: #6FD9D0; --sun-soft: rgba(111, 217, 208, .16); --on-sun: #031513;
+  --sq-l: #9FC7CB; --sq-d: #3A717B; --hl: rgba(111, 217, 208, .5); --mark: rgba(0, 18, 24, .36);
+  --pwf: #F2FAFA; --pwl: #06171D; --pbf: #0A1D25; --pbl: #8DB7BC; --backdrop: rgba(1, 6, 9, .64); color-scheme: dark;
+}
+:root[data-theme="aurora"] {
+  --bg: #07110D; --raise: #0C1A14; --raise-2: #11241B; --line: rgba(150, 235, 190, .09); --line-2: rgba(150, 235, 190, .18);
+  --ink: #D7EBDF; --ink-2: #8DAA9A; --ink-3: #5A7566; --sun: #86E3A8; --sun-soft: rgba(134, 227, 168, .16); --on-sun: #04140B;
+  --sq-l: #B2D3BC; --sq-d: #477859; --hl: rgba(134, 227, 168, .5); --mark: rgba(0, 20, 8, .36);
+  --pwf: #F3FAF5; --pwl: #06150D; --pbf: #0B1C13; --pbl: #8FB59D; --backdrop: rgba(2, 6, 4, .64); color-scheme: dark;
+}
+:root[data-theme="dusk"] {
+  --bg: #110D1A; --raise: #1A1426; --raise-2: #221A31; --line: rgba(210, 190, 255, .09); --line-2: rgba(210, 190, 255, .18);
+  --ink: #E8E1F4; --ink-2: #A79CBD; --ink-3: #6E6485; --sun: #F2A7C8; --sun-soft: rgba(242, 167, 200, .16); --on-sun: #1E0812;
+  --sq-l: #CBBEE0; --sq-d: #6A5890; --hl: rgba(242, 167, 200, .5); --mark: rgba(16, 6, 30, .36);
+  --pwf: #FBF8FF; --pwl: #150E22; --pbf: #1B1428; --pbl: #A99BC4; --backdrop: rgba(5, 3, 9, .64); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.45 var(--sans);
+  -webkit-font-smoothing: antialiased; min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+button, input { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; border-radius: 8px; }
+.num { font-variant-numeric: tabular-nums; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { position: relative; max-width: 34rem; margin: 0 auto; padding: 0 20px 28px; }
+
+/* Header */
+header { display: grid; grid-template-columns: 1fr auto; align-items: start; padding: 16px 0 2px; }
+.mark { font-weight: 600; font-size: 17px; letter-spacing: -.01em; }
+.sub { display: block; font-size: 13px; color: var(--ink-3); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tools { display: flex; gap: 4px; margin: -10px -8px 0 0; }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--ink-2); }
+.icon-btn:active { background: var(--raise-2); }
+.icon-btn svg { width: 22px; height: 22px; }
+
+/* Notices */
+.notice { display: flex; gap: 12px; align-items: center; margin: 10px 0 0; padding: 10px 12px 10px 14px; border-radius: 14px; background: var(--raise); font-size: 14px; color: var(--ink-2); }
+.notice p { margin: 0; flex: 1; }
+.notice .link-btn { color: var(--sun); font-weight: 600; white-space: nowrap; text-decoration: none; font-size: 14px; }
+.notice .x { color: var(--ink-3); width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; }
+.notice .x svg { width: 16px; height: 16px; }
+
+/* Status: the state on the top line, one plain sentence under it */
+.hero { padding: 8px 0 6px; }
+.status-line { display: flex; align-items: center; gap: 10px; min-height: 34px; }
+.turn { margin: 0; font-size: 25px; line-height: 1.2; font-weight: 600; letter-spacing: -.015em; }
+.say { margin: 2px 0 0; font-size: 17px; font-weight: 300; line-height: 1.45; letter-spacing: .005em; color: var(--ink);
+  min-height: 2.9em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Comet spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner, .round.busy::after { border-radius: 50%; background: conic-gradient(from 90deg, transparent 10%, currentColor 95%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.2px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.2px), #000 calc(100% - 2px)); animation: spin .8s linear infinite; }
+.spinner { display: inline-block; width: 16px; height: 16px; flex: none; color: var(--ink-2); }
+.spinner[hidden] { display: none; }
+
+/* Players either side of the board */
+.player { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 36px; margin: 0 -8px; padding: 0 4px; }
+.who { display: flex; align-items: baseline; gap: 6px; min-width: 0; white-space: nowrap; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line-2); align-self: center; flex: none; transition: background .2s; }
+.dot.on { background: var(--sun); box-shadow: 0 0 0 3px var(--sun-soft); }
+.nm { font-weight: 600; font-size: 15px; }
+.nsub { font-size: 13px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; }
+.won { display: flex; align-items: center; min-width: 0; flex-wrap: nowrap; overflow: hidden; }
+.won .pc { width: 21px; height: 21px; margin-left: -5px; flex: none; filter: none; }
+.won .pc:first-child { margin-left: 0; }
+.won .gap { width: 6px; flex: none; }
+.lead { margin-left: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.player.flip { transform: rotate(180deg); }
+
+/* Board */
+.board-wrap { margin: 0 -8px; }
+.board { position: relative; width: 100%; aspect-ratio: 1; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+  border-radius: 10px; box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .45), 0 0 0 1px var(--line); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.sq { position: relative; display: grid; place-items: center; min-width: 0; padding: 0; border-radius: 0; touch-action: manipulation; }
+.sq.lt { background: var(--sq-l); }
+.sq.dk { background: var(--sq-d); }
+.sq.c0 { border-top-left-radius: 10px; } .sq.c7 { border-top-right-radius: 10px; }
+.sq.c56 { border-bottom-left-radius: 10px; } .sq.c63 { border-bottom-right-radius: 10px; }
+.sq.mine { touch-action: none; }
+.sq:focus-visible { outline-offset: -3px; border-radius: 4px; z-index: 2; }
+.sq::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+.sq.last::before { background: var(--hl); }
+.sq.sel::before { background: var(--hl); box-shadow: inset 0 0 0 3px var(--sun); }
+.sq.check::before { background: radial-gradient(circle, rgba(232, 40, 30, .9) 0, rgba(232, 40, 30, .55) 38%, rgba(232, 40, 30, 0) 72%); }
+.sq.over::before { box-shadow: inset 0 0 0 4px var(--sun); background: var(--hl); }
+/* Where the chosen piece can go: a dot, or a ring around a piece it can take */
+.sq.tgt::after { content: ""; position: absolute; width: 32%; height: 32%; border-radius: 50%; background: var(--mark); pointer-events: none; z-index: 1;
+  display: grid; place-items: center; font: 700 12px/1 var(--sans); color: #fff; }
+.sq.tgt.cap::after { width: auto; height: auto; inset: 5%; background: none; box-shadow: inset 0 0 0 5px var(--mark); }
+.sq.tgt.safe::after { background: var(--safe); box-shadow: 0 0 0 2.5px rgba(255, 255, 255, .85); }
+.sq.tgt.risky::after { background: var(--risk); box-shadow: 0 0 0 2.5px rgba(255, 255, 255, .85); content: "×"; font-size: 15px; }
+.sq.tgt.cap.safe::after, .sq.tgt.cap.risky::after { content: ""; width: auto; height: auto; inset: 5%; background: none; }
+.sq.tgt.cap.safe::after { box-shadow: inset 0 0 0 5px var(--safe); }
+.sq.tgt.cap.risky::after { box-shadow: inset 0 0 0 5px var(--risk); }
+.cr, .cf { position: absolute; font-size: 10.5px; font-weight: 600; line-height: 1; pointer-events: none; z-index: 1; }
+.cr { top: 3px; left: 4px; } .cf { right: 4px; bottom: 3px; }
+.sq.lt .cr, .sq.lt .cf { color: var(--sq-d); }
+.sq.dk .cr, .sq.dk .cf { color: var(--sq-l); }
+.pcw { position: relative; z-index: 2; width: 100%; height: 100%; display: grid; place-items: center; pointer-events: none; }
+.sq.moving, .sq.lifting { z-index: 5; }
+.pc { width: 88%; height: 88%; display: block; overflow: visible; filter: drop-shadow(0 1.5px 1.2px rgba(0, 0, 0, .3)); will-change: transform; }
+.pc.pw { --f: var(--pwf); --l: var(--pwl); }
+.pc.pb { --f: var(--pbf); --l: var(--pbl); }
+.pc .f { fill: var(--f); stroke: var(--l); stroke-width: 4; stroke-linejoin: round; }
+.pc .d { fill: var(--l); }
+.pc .s { fill: none; stroke: var(--l); stroke-width: 4; stroke-linecap: round; }
+.sq.lifting .pc { filter: drop-shadow(0 10px 8px rgba(0, 0, 0, .35)); }
+
+/* Controls under the board */
+.controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.ctl { display: grid; justify-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2); }
+.round { position: relative; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--raise); color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line); transition: transform .12s ease, background .2s; }
+.round svg { width: 24px; height: 24px; }
+.round:active { transform: scale(.94); }
+.round:disabled { opacity: .38; cursor: default; }
+.round[aria-pressed="true"] { background: var(--sun); color: var(--on-sun); box-shadow: none; }
+.hint-key { margin: 12px 0 0; text-align: center; font-size: 13.5px; color: var(--ink-2); }
+.hint-key[hidden] { display: none; }
+.key-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: -1px; margin-right: 4px; box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .8); }
+
+/* Buttons and lists in sheets */
+.btn { height: 44px; padding: 0 18px; border-radius: 22px; background: var(--raise-2); font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+.btn.primary { background: var(--sun); color: var(--on-sun); }
+.btn.wide { width: 100%; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.actions.stack { flex-direction: column; }
+.link-btn { color: var(--ink-2); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+
+dialog.sheet {
+  position: fixed; inset: auto 0 0 0; margin: 0 auto; width: 100%; max-width: 34rem; max-height: 90vh;
+  border: 0; border-radius: 22px 22px 0 0; padding: 0; background: var(--raise); color: var(--ink);
+  overflow: auto; overscroll-behavior: contain; touch-action: pan-y;
+}
+dialog.sheet[open] { animation: rise .28s cubic-bezier(.2, .8, .2, 1); }
+dialog.sheet::backdrop { background: var(--backdrop); }
+dialog.sheet:focus { outline: none; }
+.sheet .theme-note { font-size: 12.5px; color: var(--ink-3); margin-top: 12px; }
+dialog.sheet.springing { transition: transform .22s cubic-bezier(.2, .8, .2, 1); }
+@keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+.sheet-in { padding: 10px 22px calc(26px + env(safe-area-inset-bottom)); }
+.grabber { width: 36px; height: 4px; border-radius: 2px; background: var(--line-2); margin: 0 auto 6px; }
+.grab-zone { padding: 4px 0 6px; margin: -10px -22px 0; padding-top: 10px; cursor: grab; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sheet-head h2 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+.sheet h3 { margin: 22px 0 8px; font-size: 15px; font-weight: 600; }
+.sheet p { margin: 6px 0; color: var(--ink-2); font-size: 15px; }
+.sheet .lede { font-size: 17px; font-weight: 300; line-height: 1.5; color: var(--ink); margin-top: 8px; }
+.sheet .small { font-size: 13.5px; color: var(--ink-3); }
+.sheet .warn { margin-top: 18px; }
+.switcher { display: flex; padding: 3px; border-radius: 22px; background: var(--raise-2); margin: 16px 0 4px; }
+.switcher button { flex: 1; height: 38px; border-radius: 19px; font-size: 15px; font-weight: 500; color: var(--ink-2); }
+.switcher button[aria-pressed="true"] { background: var(--raise); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+.levels { display: grid; gap: 6px; }
+.lvl { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; text-align: left; padding: 9px 12px; border-radius: 14px; background: var(--raise-2); border: 2px solid transparent; min-height: 54px; }
+.lvl[aria-pressed="true"] { border-color: var(--sun); background: var(--sun-soft); }
+.lvl b { display: block; font-weight: 600; font-size: 15.5px; }
+.lvl small { display: block; font-size: 13px; color: var(--ink-2); }
+.pips { display: grid; grid-template-columns: repeat(5, 7px); gap: 3px; }
+.pips i { width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); }
+.pips i.on { background: var(--sun); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { height: 40px; padding: 0 16px; border-radius: 20px; background: var(--raise-2); font-size: 15px; font-weight: 500; color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--sun); color: var(--on-sun); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 6px 0; }
+.toggle-row p { margin: 0; color: var(--ink); font-size: 15.5px; }
+.toggle-row + .toggle-row { margin-top: 8px; }
+.switch { width: 50px; height: 30px; border-radius: 15px; background: var(--raise-2); position: relative; flex: none; transition: background .2s; box-shadow: inset 0 0 0 1px var(--line); }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink-3); transition: transform .2s, background .2s; }
+.switch[aria-checked="true"] { background: var(--sun); box-shadow: none; }
+.switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--on-sun); }
+.promo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+.promo-opt { display: grid; justify-items: center; gap: 4px; padding: 10px 0 8px; border-radius: 14px; background: var(--sq-l); color: #2A231A; font-size: 13.5px; font-weight: 600; }
+.promo-opt .pc { width: 56px; height: 56px; }
+.end-art { display: flex; justify-content: center; margin: 4px 0 2px; }
+.end-art .pc { width: 72px; height: 72px; }
+
+/* Theme picker */
+.pop { position: absolute; top: 60px; right: 12px; z-index: 6; width: min(300px, calc(100% - 24px)); padding: 16px 12px 12px; border-radius: 18px;
+  background: var(--raise); border: 1px solid var(--line-2); box-shadow: 0 18px 40px rgba(0, 0, 0, .3); animation: drop .18s ease-out; transform-origin: top right; }
+.pop[hidden] { display: none; }
+@keyframes drop { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+.theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 4px; }
+.theme-opt { display: grid; justify-items: center; gap: 6px; padding: 4px 0; font-size: 12.5px; color: var(--ink-2); }
+.theme-opt[aria-pressed="true"] { color: var(--ink); }
+.sw { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line-2);
+  background: radial-gradient(circle, var(--b) 0 6px, transparent 7px), radial-gradient(circle at 50% 35%, var(--c), var(--a)); }
+.theme-opt[aria-pressed="true"] .sw { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--sun); }
+.theme-note { margin: 12px 4px 0; font-size: 12.5px; color: var(--ink-3); }
+
+/* Toast: a popover, so it shows above open sheets */
+.toast { position: fixed; inset: auto auto calc(24px + env(safe-area-inset-bottom)) 50%; margin: 0; border: 0; width: max-content; max-width: calc(100% - 40px);
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none; overflow: visible;
+  background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 22px; font-size: 14px; font-weight: 500; text-align: center;
+  transition: opacity .2s, transform .2s; z-index: 30; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+#confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; margin: 0; padding: 0; border: 0; background: transparent; pointer-events: none; z-index: 25; overflow: hidden; }
+#confetti:not(:popover-open) { display: none; }
+#confetti.fallback { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .spinner, .round.busy::after { animation: spin 1.6s linear infinite !important; }
+}
+@media (max-height: 700px) {
+  .say { font-size: 16px; }
+  .turn { font-size: 22px; }
+  header { padding-top: 10px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="mark">Chess</div>
+      <span class="sub" id="sub"></span>
+    </div>
+    <div class="tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="themes" aria-label="Colour theme" title="Colour theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Settings" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+      </button>
+    </div>
+  </header>
+  <div class="pop" id="themes" hidden role="group" aria-label="Colour theme"></div>
+  <div id="notices"></div>
+  <main>
+    <section class="hero" aria-live="polite">
+      <div class="status-line"><h1 class="turn" id="turn">Your turn</h1><span class="spinner" id="spin" hidden aria-hidden="true"></span></div>
+      <p class="say" id="say"></p>
+    </section>
+    <div class="player" id="pTop"></div>
+    <div class="board-wrap"><div class="board" id="board" aria-label="Chess board"></div></div>
+    <div class="player" id="pBot"></div>
+    <div class="controls">
+      <div class="ctl"><button class="round" id="undoBtn" type="button" aria-label="Take back a move" title="Take back a move">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4.5 11.5 9 16"/><path d="M5 11.5h9.5a5 5 0 0 1 0 10H12"/></svg>
+      </button><span aria-hidden="true">Take back</span></div>
+      <div class="ctl"><button class="round" id="hintBtn" type="button" aria-pressed="false" aria-label="Hints" title="Hints">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.5h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2v1.5h5V16c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3Z"/></svg>
+      </button><span aria-hidden="true">Hints</span></div>
+      <div class="ctl"><button class="round" id="newBtn" type="button" aria-label="New game" title="New game">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button><span aria-hidden="true">New game</span></div>
+    </div>
+    <p class="hint-key" id="hintKey" hidden><span class="key-dot" style="background:var(--safe)"></span>Safe <span style="display:inline-block;width:12px"></span><span class="key-dot" style="background:var(--risk)"></span>Could be taken</p>
+  </main>
+</div>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle" tabindex="-1"><div class="sheet-in" id="sheetBody"></div></dialog>
+<div class="toast" id="toast" popover="manual" role="status"></div>
+<canvas id="confetti" popover="manual" aria-hidden="true"></canvas>
+
+<script src="core.js?v=1"></script>
+<script>
+(() => {
+'use strict';
+const C = window.Chess;
+// Release tag from the core.js link above, passed on to the worker so every file comes from the same release
+const V = new URL(document.querySelector('script[src^="core.js"]').src).search;
+
+/* ---------- Settings and storage ---------- */
+const PRE = 'chs.';
+const get = (k, d) => { try { const v = localStorage.getItem(PRE + k); return v == null ? d : JSON.parse(v); } catch { return d; } };
+const put = (k, v) => { try { localStorage.setItem(PRE + k, JSON.stringify(v)); } catch {} };
+const UA = navigator.userAgent;
+const isIOS = /iP(hone|ad|od)/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const LEVELS = [null,
+  { name: 'Snail', note: 'Moves at random. Easy to beat.' },
+  { name: 'Bunny', note: 'Grabs any piece it can.' },
+  { name: 'Fox', note: 'Looks one move ahead.' },
+  { name: 'Owl', note: 'Looks a few moves ahead.' },
+  { name: 'Lion', note: 'Thinks hard. Beats most casual players.' },
+];
+const THEMES = [
+  { id: 'daylight', name: 'Daylight', bg: '#F6F2E9', mid: '#7FA65B', accent: '#C94A17' },
+  { id: 'twilight', name: 'Twilight', bg: '#0F1528', mid: '#5C6893', accent: '#F2C063' },
+  { id: 'red', name: 'Night red', bg: '#0C0404', mid: '#3B110C', accent: '#FF5B3D' },
+  { id: 'amber', name: 'Amber', bg: '#0D0904', mid: '#77522B', accent: '#FFB04A' },
+  { id: 'sea', name: 'Deep sea', bg: '#06121A', mid: '#3A717B', accent: '#6FD9D0' },
+  { id: 'aurora', name: 'Aurora', bg: '#07110D', mid: '#477859', accent: '#86E3A8' },
+  { id: 'dusk', name: 'Dusk', bg: '#110D1A', mid: '#6A5890', accent: '#F2A7C8' },
+];
+const PIECE_NAME = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+
+const S = {
+  set: Object.assign({ theme: 'daylight', sound: true, hints: false, face: false }, get('settings', {})),
+  mode: 'cpu', level: 2, human: 'w', pick: 'w',
+  pos: null, st: null, b64: [], cap: null,
+  sel: null, targets: new Map(), promo: null,
+  thinking: false, thinkId: 0, installEvt: null, ng: null, endTimer: 0,
+};
+const saveSet = () => put('settings', S.set);
+const saveGame = () => put('game', { mode: S.mode, level: S.level, human: S.human, pick: S.pick, moves: S.pos.moves.map(C.uci) });
+
+/* ---------- Helpers ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const i64 = (s) => (s >> 4) * 8 + (s & 7);              // 0x88 square to 0..63 (a8 first)
+const sqName = (i) => 'abcdefgh'[i & 7] + (8 - (i >> 3));
+const turn = () => (S.pos.side ? 'b' : 'w');
+const colourName = (c) => (c === 'w' ? 'White' : 'Black');
+const flipped = () => S.mode === 'cpu' && S.human === 'b';
+const disp = (i) => (flipped() ? 63 - i : i);          // board index ↔ screen position (the same both ways)
+const cpuName = () => LEVELS[S.level].name;
+const faceToFace = () => S.mode === 'two' && S.set.face;
+const humanTurn = () => S.mode === 'two' || turn() === S.human;
+const canPlay = () => !S.st.over && !S.thinking && !S.promo && humanTurn();
+
+const ICON = {
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+};
+
+/* ---------- Pieces: our own drawings, the same on every phone ---------- */
+const BASE = '<rect class="f" x="21" y="78" width="58" height="12" rx="5"/>';
+const BODY = '<path class="f" d="M34 79C35 70 39 64 42 59h16c3 5 7 11 8 20Z"/>';
+const PIECES = {
+  p: '<path class="f" d="M34 79c0-13 7-22 10-29h12c3 7 10 16 10 29Z"/><rect class="f" x="36" y="43" width="28" height="9" rx="4.5"/><circle class="f" cx="50" cy="29" r="13"/>' + BASE,
+  r: '<path class="f" d="M33 79l3-35h28l3 35Z"/><path class="f" d="M28 22h10v8h7v-8h10v8h7v-8h10v22H28Z"/>' + BASE,
+  n: '<path class="f" d="M30 79c1-11 5-19 10-24-7 1-13 0-17-4-4-4-3-10 1-13l15-11c1-5 3-10 6-16l6 9c13 2 23 14 23 30 0 12-3 22-4 29Z"/><circle class="d" cx="44" cy="32" r="3.6"/><path class="s" d="M61 27c5 7 7 16 6 26"/>' + BASE,
+  b: '<circle class="f" cx="50" cy="14" r="6"/><path class="f" d="M50 21c13 9 17 22 11 34H39c-6-12-2-25 11-34Z"/><path class="s" d="M55 31l-9 12"/><rect class="f" x="35" y="54" width="30" height="8" rx="4"/><path class="f" d="M37 79c1-9 5-15 7-17h12c2 2 6 8 7 17Z"/>' + BASE,
+  q: '<path class="f" d="M31 53 22 24l14 12 2-20 8 16 4-20 4 20 8-16 2 20 14-12-9 29Z"/><circle class="f" cx="22" cy="22" r="4.5"/><circle class="f" cx="38" cy="14" r="4.5"/><circle class="f" cx="50" cy="10" r="4.5"/><circle class="f" cx="62" cy="14" r="4.5"/><circle class="f" cx="78" cy="22" r="4.5"/>' + BODY + '<rect class="f" x="29" y="51" width="42" height="9" rx="4.5"/>' + BASE,
+  k: '<path class="f" d="M46 5h8v6h6v8h-6v9h-8v-9h-6v-8h6Z"/><path class="f" d="M30 52c-3-12 6-24 20-24s23 12 20 24Z"/>' + BODY + '<rect class="f" x="29" y="50" width="42" height="9" rx="4.5"/>' + BASE,
+};
+function pieceSvg(code, turned) {
+  const inner = PIECES[code[1]];
+  return `<svg class="pc ${code[0] === 'w' ? 'pw' : 'pb'}" viewBox="0 0 100 100" aria-hidden="true">${turned ? `<g transform="rotate(180 50 50)">${inner}</g>` : inner}</svg>`;
+}
+
+/* ---------- Sounds: made on the fly, no files ---------- */
+const SND = { ctx: null };
+function audio() {
+  if (!S.set.sound) return null;
+  try {
+    if (!SND.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; SND.ctx = new AC(); }
+    if (SND.ctx.state === 'suspended') SND.ctx.resume();
+    return SND.ctx;
+  } catch { return null; }
+}
+function knock(t0, freq, vol) {
+  const ctx = SND.ctx, len = 0.07;
+  // a short burst of filtered noise for the click of wood on wood
+  const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * len), ctx.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = 1.4;
+  const g = ctx.createGain(); g.gain.value = vol;
+  src.connect(bp); bp.connect(g); g.connect(ctx.destination); src.start(t0);
+  // and a soft low body under it
+  const o = ctx.createOscillator(), og = ctx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(freq / 5, t0); o.frequency.exponentialRampToValueAtTime(freq / 8, t0 + 0.09);
+  og.gain.setValueAtTime(vol * 0.55, t0); og.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
+  o.connect(og); og.connect(ctx.destination); o.start(t0); o.stop(t0 + 0.12);
+}
+function sound(kind) {
+  const ctx = audio();
+  if (!ctx) return;
+  try {
+    const t = ctx.currentTime + 0.01;
+    if (kind === 'move') knock(t, 1100, 0.5);
+    else if (kind === 'capture') { knock(t, 900, 0.6); knock(t + 0.06, 1250, 0.35); }
+    else if (kind === 'win') {
+      [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => {
+        const o = ctx.createOscillator(), g = ctx.createGain(), at = t + i * 0.13, hold = i === 4 ? 0.9 : 0.32;
+        o.type = 'triangle'; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.13, at + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, at + hold);
+        o.connect(g); g.connect(ctx.destination); o.start(at); o.stop(at + hold + 0.05);
+      });
+    }
+  } catch {}
+}
+// Phones only allow sound after a tap, so wake the audio on the first one
+document.addEventListener('pointerdown', () => { if (S.set.sound) audio(); }, { capture: true });
+
+/* ---------- Toast and confetti ---------- */
+let toastTimer = 0, toastHide = 0;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  clearTimeout(toastTimer); clearTimeout(toastHide);
+  try { if (t.matches(':popover-open')) t.hidePopover(); t.showPopover(); } catch {}
+  requestAnimationFrame(() => t.classList.add('show'));
+  toastTimer = setTimeout(() => {
+    t.classList.remove('show');
+    toastHide = setTimeout(() => { try { t.hidePopover(); } catch {} }, 220);
+  }, Math.max(2400, msg.length * 55));
+}
+
+function confetti() {
+  if (reduced()) return;
+  const cv = $('#confetti');
+  try { cv.showPopover(); } catch { cv.classList.add('fallback'); }
+  const dpr = window.devicePixelRatio || 1, W = innerWidth, H = innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--sun').trim() || '#C94A17';
+  const cols = [accent, '#F2C063', '#6FD9D0', '#F2A7C8', '#86E3A8', '#7DA4F2'];
+  const bits = Array.from({ length: 150 }, () => ({
+    x: Math.random() * W, y: -20 - Math.random() * H * 0.5, vx: (Math.random() - 0.5) * 2.2, vy: 2 + Math.random() * 3.2,
+    r: Math.random() * 6.3, vr: (Math.random() - 0.5) * 0.3, w: 6 + Math.random() * 6, h: 4 + Math.random() * 5,
+    c: cols[Math.floor(Math.random() * cols.length)], round: Math.random() < 0.3,
+  }));
+  const start = performance.now(), life = 2600;
+  (function frame(now) {
+    const el = now - start;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = el > life - 600 ? Math.max(0, (life - el) / 600) : 1;
+    for (const b of bits) {
+      b.x += b.vx; b.y += b.vy; b.vy += 0.05; b.r += b.vr; b.vx *= 0.995;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r); ctx.fillStyle = b.c;
+      if (b.round) { ctx.beginPath(); ctx.arc(0, 0, b.h / 1.6, 0, 7); ctx.fill(); } else ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h * Math.abs(Math.cos(b.r * 2)) + 1);
+      ctx.restore();
+    }
+    if (el < life) requestAnimationFrame(frame);
+    else { ctx.clearRect(0, 0, W, H); try { cv.hidePopover(); } catch {} cv.classList.remove('fallback'); }
+  })(start);
+}
+
+/* ---------- Words ---------- */
+function owner(c) {
+  if (S.mode === 'cpu') return c === S.human ? 'your' : `${cpuName()}’s`;
+  return `${colourName(c)}’s`;
+}
+const cap1 = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// The last move in a sentence: "Fox moved its knight to f6."
+function sentence(d) {
+  const cpu = S.mode === 'cpu', you = cpu && d.colour === S.human;
+  const who = cpu ? (you ? 'You' : cpuName()) : colourName(d.colour);
+  const them = d.colour === 'w' ? 'b' : 'w';
+  if (d.castle) return `${who} castled${d.castle === 'queen' ? ' on the queen’s side' : ''}.`;
+  if (d.promo) return `${cap1(owner(d.colour))} pawn reached the far side and became a ${d.promo}${d.captured ? `, taking ${owner(them)} ${d.captured}` : ''}!`;
+  if (d.ep) return `${cap1(owner(d.colour))} pawn took ${owner(them)} pawn in passing (en passant).`;
+  if (d.captured) return `${cap1(owner(d.colour))} ${d.piece} took ${owner(them)} ${d.captured} on ${d.to}.`;
+  const whose = cpu ? (you ? 'your' : 'its') : 'a';
+  return `${who} moved ${whose} ${d.piece} to ${d.to}.`;
+}
+
+function lastDesc() {
+  const p = S.pos, n = p.moves.length;
+  if (!n) return null;
+  const m = p.moves[n - 1];
+  C.unmake(p);
+  const d = C.describe(p, m);
+  C.make(p, m);
+  return d;
+}
+
+function endWords() {
+  const st = S.st, moves = Math.ceil(S.pos.moves.length / 2), name = cpuName();
+  if (st.reason === 'checkmate') {
+    if (S.mode === 'cpu') {
+      if (st.winner === S.human) return { title: 'You won!', text: `Checkmate in ${moves} move${moves === 1 ? '' : 's'}. ${name}’s king has nowhere to go.`, kind: 'win' };
+      return { title: `${name} won this time`, text: 'Checkmate. Take back a few moves to try another way, or start a new game.', kind: 'lose' };
+    }
+    return { title: `${colourName(st.winner)} wins!`, text: `Checkmate in ${moves} move${moves === 1 ? '' : 's'}. ${colourName(st.winner === 'w' ? 'b' : 'w')}’s king has nowhere to go.`, kind: 'win' };
+  }
+  const stuck = S.mode === 'cpu' ? (turn() === S.human ? 'You can’t move, but your king isn’t in check' : `${name} can’t move, but its king isn’t in check`)
+    : `${colourName(turn())} can’t move, but isn’t in check`;
+  const why = {
+    stalemate: `Stalemate. ${stuck}.`,
+    material: 'There aren’t enough pieces left for anyone to checkmate.',
+    repetition: 'The same position came up three times.',
+    fifty: 'Fifty moves went by with no capture and no pawn move.',
+  }[st.reason];
+  return { title: 'It’s a draw', text: why, kind: 'draw' };
+}
+
+function heroWords() {
+  if (S.st.over) { const e = endWords(); return { title: e.title, say: e.text }; }
+  const last = lastDesc(), check = S.st.check, said = last ? sentence(last) : '';
+  if (S.mode === 'cpu') {
+    if (turn() !== S.human) return { title: `${cpuName()} is thinking`, say: said || `You’re Black, so ${cpuName()} goes first.`, busy: true };
+    if (!last) return { title: 'Your turn', say: `You’re ${colourName(S.human)}. Tap a piece to see where it can go.` };
+    return { title: check ? 'Check!' : 'Your turn', say: said + (check ? ' Keep your king safe.' : '') };
+  }
+  const side = colourName(turn());
+  if (!last) return { title: 'White’s turn', say: 'White moves first. Tap a piece to see where it can go.' };
+  return { title: check ? `Check! ${side}’s turn` : `${side}’s turn`, say: said + (check ? ` ${side}’s king is in check.` : '') };
+}
+
+/* ---------- Board ---------- */
+const boardEl = $('#board');
+const sqEls = [];
+(function buildBoard() {
+  for (let d = 0; d < 64; d++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.d = d;
+    b.innerHTML = '<span class="cr"></span><span class="cf"></span><span class="pcw"></span>';
+    b._pc = null;
+    boardEl.appendChild(b);
+    sqEls.push(b);
+  }
+})();
+
+function select(i) {
+  S.sel = i;
+  S.targets = new Map();
+  if (i == null) return;
+  for (const m of S.st.moves || []) {
+    if (i64(C.from(m)) !== i) continue;
+    const to = i64(C.to(m));
+    if (S.targets.has(to)) continue;   // a pawn reaching the end has four moves to one square
+    S.targets.set(to, { cap: C.isCapture(m), risky: S.set.hints ? C.risky(S.pos, m) : false });
+  }
+}
+
+function renderBoard() {
+  const b64 = S.b64, flip = flipped(), turned = faceToFace();
+  const n = S.pos.moves.length, last = n ? S.pos.moves[n - 1] : 0;
+  const lf = last ? i64(C.from(last)) : -1, lt = last ? i64(C.to(last)) : -1;
+  const king = S.st.check ? b64.indexOf(turn() + 'k') : -1;
+  const play = canPlay(), me = turn();
+  for (let d = 0; d < 64; d++) {
+    const i = flip ? 63 - d : d, el = sqEls[d], row = i >> 3, col = i & 7, code = b64[i];
+    const t = S.targets.get(i);
+    let cls = 'sq ' + ((row + col) % 2 ? 'dk' : 'lt');
+    if (d === 0 || d === 7 || d === 56 || d === 63) cls += ' c' + d;
+    if (i === lf || i === lt) cls += ' last';
+    if (i === S.sel) cls += ' sel';
+    if (i === king) cls += ' check';
+    if (t) cls += ' tgt' + (t.cap ? ' cap' : '') + (S.set.hints ? (t.risky ? ' risky' : ' safe') : '');
+    if (play && code && code[0] === me) cls += ' mine';
+    if (el.className !== cls) el.className = cls;
+    const cr = d % 8 === 0 ? String(8 - row) : '', cf = d >= 56 ? 'abcdefgh'[col] : '';
+    if (el.children[0].textContent !== cr) el.children[0].textContent = cr;
+    if (el.children[1].textContent !== cf) el.children[1].textContent = cf;
+    const upside = !!(turned && code && code[0] === 'b');
+    const key = code + (upside ? '^' : '');
+    if (el._pc !== key) { el.children[2].innerHTML = code ? pieceSvg(code, upside) : ''; el._pc = key; }
+    let label = sqName(i) + ', ' + (code ? `${colourName(code[0]).toLowerCase()} ${PIECE_NAME[code[1]]}` : 'empty');
+    if (t) label += t.cap ? ', can take' : ', can move here';
+    if (t && S.set.hints) label += t.risky ? ', could be taken' : ', safe';
+    if (el.getAttribute('aria-label') !== label) el.setAttribute('aria-label', label);
+  }
+}
+
+// Slide a piece from one square to another after it has been drawn in its new place
+function slide(fromI, toI) {
+  if (reduced()) return;
+  const dF = disp(fromI), dT = disp(toI), el = sqEls[dT].querySelector('.pc');
+  if (!el || !el.animate) return;
+  const size = sqEls[0].getBoundingClientRect().width;
+  const dx = ((dF & 7) - (dT & 7)) * size, dy = ((dF >> 3) - (dT >> 3)) * size;
+  sqEls[dT].classList.add('moving');
+  const a = el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }], { duration: 210, easing: 'cubic-bezier(.2, .8, .2, 1)' });
+  const done = () => sqEls[dT].classList.remove('moving');
+  a.onfinish = done; a.oncancel = done;
+}
+
+function stripHtml(colour) {
+  const cpu = S.mode === 'cpu', cap = S.cap;
+  const won = colour === 'w' ? cap.byWhite : cap.byBlack, lead = colour === 'w' ? cap.lead : -cap.lead;
+  const other = colour === 'w' ? 'b' : 'w';
+  let nm, sub = '';
+  if (cpu) {
+    if (colour === S.human) { nm = 'You'; sub = colourName(colour); }
+    else { nm = cpuName(); sub = `level ${S.level}`; }
+  } else nm = colourName(colour);
+  const on = !S.st.over && turn() === colour;
+  let pcs = '', prev = '';
+  for (const t of won) { if (prev && t !== prev) pcs += '<span class="gap"></span>'; pcs += pieceSvg(other + t); prev = t; }
+  const label = `${nm}${on ? ', to move' : ''}. ${won.length ? `Has taken ${won.length} piece${won.length === 1 ? '' : 's'}` : 'Hasn’t taken any pieces yet'}${lead > 0 ? `, ahead by ${lead}` : ''}.`;
+  return `<span class="vh">${esc(label)}</span><span class="who" aria-hidden="true"><span class="dot${on ? ' on' : ''}"></span><span class="nm">${esc(nm)}</span>${sub ? `<span class="nsub">${esc(sub)}</span>` : ''}</span>
+    <span class="won" aria-hidden="true">${pcs}${lead > 0 ? `<span class="lead num">+${lead}</span>` : ''}</span>`;
+}
+
+function render() {
+  S.b64 = C.board64(S.pos);
+  S.cap = C.captured(S.pos);
+  const w = heroWords();
+  $('#turn').textContent = w.title;
+  $('#say').textContent = w.say;
+  $('#spin').hidden = !w.busy;
+  $('#sub').textContent = S.mode === 'cpu' ? `Against ${cpuName()} · level ${S.level}` : `Two players${faceToFace() ? ' · face to face' : ''}`;
+  const top = flipped() ? 'w' : 'b';
+  $('#pTop').innerHTML = stripHtml(top);
+  $('#pBot').innerHTML = stripHtml(top === 'w' ? 'b' : 'w');
+  $('#pTop').classList.toggle('flip', faceToFace());
+  renderBoard();
+  const undoable = S.mode === 'two' ? S.pos.moves.length > 0 : S.pos.moves.length >= (S.human === 'w' ? 1 : 2);
+  $('#undoBtn').disabled = !undoable;
+  $('#hintBtn').setAttribute('aria-pressed', String(!!S.set.hints));
+  $('#hintKey').hidden = !S.set.hints;
+  renderNotices();
+}
+
+/* ---------- Playing ---------- */
+function onSquare(i) {
+  if (!canPlay()) {
+    if (S.thinking && S.b64[i]) toast(`${cpuName()} is thinking. Your turn is next.`);
+    return;
+  }
+  const code = S.b64[i], mine = code && code[0] === turn();
+  if (S.sel == null) { if (mine) { select(i); renderBoard(); } return; }
+  if (i === S.sel) { select(null); renderBoard(); return; }
+  if (S.targets.has(i)) { tryMove(S.sel, i, false); return; }
+  select(mine ? i : null);
+  renderBoard();
+}
+
+function tryMove(from, to, dragged) {
+  const cands = (S.st.moves || []).filter((m) => i64(C.from(m)) === from && i64(C.to(m)) === to);
+  if (!cands.length) return;
+  if (cands.length > 1) { openPromotion(cands); return; }
+  playMove(cands[0], dragged);
+}
+
+function playMove(m, noSlide) {
+  const d = C.describe(S.pos, m), from = i64(C.from(m)), to = i64(C.to(m));
+  if (!C.make(S.pos, m)) return;
+  select(null);
+  S.st = C.status(S.pos);
+  saveGame();
+  put('started', true);
+  sound(d.captured ? 'capture' : 'move');
+  render();
+  if (!noSlide) {
+    slide(from, to);
+    if (d.castle) { const k = to > from; slide(k ? from + 3 : from - 4, k ? from + 1 : from - 1); }
+  }
+  if (S.st.over) gameOver();
+  else computerTurn();
+}
+
+function gameOver() {
+  const e = endWords();
+  if (e.kind === 'win') sound('win');
+  clearTimeout(S.endTimer);
+  S.endTimer = setTimeout(() => {
+    if (!S.st.over) return;
+    openEnd();
+    if (e.kind === 'win') confetti();
+  }, 700);
+}
+
+function takeBack() {
+  if (!S.pos.moves.length) return;
+  cancelThinking();
+  clearTimeout(S.endTimer);
+  closeSheet();
+  let undone = 0, mine = false;
+  if (S.mode === 'two') { C.unmake(S.pos); undone = 1; }
+  else {
+    // Back to your turn: your last move, and the computer's reply if it made one
+    while (S.pos.moves.length) {
+      C.unmake(S.pos); undone++;
+      if (turn() === S.human) mine = true;
+      if (mine && turn() === S.human) break;
+    }
+  }
+  select(null);
+  S.st = C.status(S.pos);
+  saveGame();
+  render();
+  toast(S.mode === 'two' ? 'Took back 1 move' : undone > 1 ? `Took back your move and ${cpuName()}’s reply` : 'Took back your move');
+  computerTurn();
+}
+
+/* ---------- The computer's move ---------- */
+let worker = null, workerBroken = false, askSeq = 0;
+const asks = new Map();
+function getWorker() {
+  if (worker || workerBroken) return worker;
+  try {
+    worker = new Worker('worker.js' + V);
+    worker.onmessage = (e) => { const r = asks.get(e.data.id); asks.delete(e.data.id); if (r) r(e.data.move); };
+    worker.onerror = () => {
+      // fall back to thinking on the page
+      workerBroken = true; worker = null;
+      const pending = [...asks.values()]; asks.clear();
+      pending.forEach((r) => r(undefined));
+    };
+  } catch { workerBroken = true; worker = null; }
+  return worker;
+}
+function thinkHere(moves, level) {
+  const p = C.fromMoves(moves);
+  const r = C.think(p, level, { time: 900 });
+  return r ? C.uci(r.move) : null;
+}
+function ask(moves, level) {
+  return new Promise((resolve) => {
+    const w = getWorker();
+    if (!w) { setTimeout(() => resolve(thinkHere(moves, level)), 30); return; }
+    const id = ++askSeq;
+    asks.set(id, (mv) => resolve(mv === undefined ? thinkHere(moves, level) : mv));
+    w.postMessage({ id, moves, level });
+  });
+}
+function cancelThinking() {
+  S.thinkId++;
+  if (S.thinking && worker) { worker.terminate(); worker = null; asks.clear(); }
+  S.thinking = false;
+}
+
+function computerTurn() {
+  if (S.mode !== 'cpu' || S.st.over || turn() === S.human || S.thinking) return;
+  const id = ++S.thinkId, started = Date.now();
+  const wait = 550 + Math.random() * 350;   // a short pause, so the move you made is seen landing
+  S.thinking = true;
+  render();
+  ask(S.pos.moves.map(C.uci), S.level).then((u) => {
+    if (id !== S.thinkId) return;
+    setTimeout(() => {
+      if (id !== S.thinkId) return;
+      S.thinking = false;
+      let m = u ? C.fromUci(S.pos, u) : 0;
+      if (!m) { const all = C.legal(S.pos); m = all[Math.floor(Math.random() * all.length)]; }
+      if (m) playMove(m); else render();
+    }, Math.max(0, wait - (Date.now() - started)));
+  });
+}
+
+/* ---------- Tapping and dragging on the board ----------
+   Taps are read from the touch itself, not from the browser's click, because a phone can
+   drop the click for a quick tap straight after a drag. Clicks still work for the keyboard. */
+let drag = null, press = null, swallowClick = false, tapAt = 0, tapD = -1;
+function squareAt(x, y) {
+  const r = boardEl.getBoundingClientRect();
+  if (x < r.left || y < r.top || x >= r.right || y >= r.bottom) return -1;
+  const s = r.width / 8;
+  return Math.floor((y - r.top) / s) * 8 + Math.floor((x - r.left) / s);
+}
+document.addEventListener('pointerdown', () => { swallowClick = false; }, { capture: true });
+boardEl.addEventListener('pointerdown', (e) => {
+  if (e.button > 0) return;
+  const el = e.target.closest('.sq');
+  if (!el || popOpen()) return;     // with the theme picker open, a tap only closes it
+  if (drag && drag.moved) return;   // a second finger while dragging
+  const d = +el.dataset.d;
+  press = { d, x0: e.clientX, y0: e.clientY, id: e.pointerId, moved: false };
+  drag = null;
+  if (!canPlay()) return;
+  const i = disp(d), code = S.b64[i];
+  if (!code || code[0] !== turn()) return;
+  drag = { i, d, x0: e.clientX, y0: e.clientY, id: e.pointerId, moved: false, pc: null, over: -1 };
+});
+boardEl.addEventListener('pointermove', (e) => {
+  if (press && e.pointerId === press.id && Math.hypot(e.clientX - press.x0, e.clientY - press.y0) >= 10) press.moved = true;
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+  if (!drag.moved) {
+    if (Math.hypot(dx, dy) < 8) return;
+    drag.moved = true;
+    try { boardEl.setPointerCapture(e.pointerId); } catch {}
+    if (S.sel !== drag.i) { select(drag.i); renderBoard(); }
+    drag.pc = sqEls[drag.d].querySelector('.pc');
+    sqEls[drag.d].classList.add('lifting');
+  }
+  if (drag.pc) drag.pc.style.transform = `translate(${dx}px, ${dy}px) scale(1.15)`;
+  const over = squareAt(e.clientX, e.clientY);
+  if (over !== drag.over) {
+    if (drag.over >= 0) sqEls[drag.over].classList.remove('over');
+    drag.over = over;
+    if (over >= 0 && S.targets.has(disp(over))) sqEls[over].classList.add('over');
+  }
+});
+function endDrag(e) {
+  const pr = press && e.pointerId === press.id ? press : null;
+  if (pr) press = null;
+  const g = drag && e.pointerId === drag.id ? drag : null;
+  if (g) drag = null;
+  if (!g || !g.moved) {
+    // a plain tap on a square
+    if (pr && !pr.moved && e.type === 'pointerup' && squareAt(e.clientX, e.clientY) === pr.d) {
+      tapAt = Date.now(); tapD = pr.d;
+      onSquare(disp(pr.d));
+    }
+    return;
+  }
+  swallowClick = true;    // ignore the click this drag may produce, until the next touch
+  if (g.over >= 0) sqEls[g.over].classList.remove('over');
+  sqEls[g.d].classList.remove('lifting');
+  const to = g.over >= 0 ? disp(g.over) : -1;
+  if (g.pc) g.pc.style.transform = '';
+  if (e.type === 'pointerup' && to >= 0 && S.targets.has(to)) tryMove(g.i, to, true);
+  else if (g.pc && g.pc.animate && !reduced()) {
+    // back to where it started
+    const r = sqEls[g.d].getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    g.pc.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 180, easing: 'ease-out' });
+  }
+}
+boardEl.addEventListener('pointerup', endDrag);
+boardEl.addEventListener('pointercancel', endDrag);
+boardEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+/* ---------- Sheets ---------- */
+const sheet = $('#sheet');
+let sheetAt = 0;
+function openSheet(html) {
+  $('#sheetBody').innerHTML = html;
+  sheet.style.transform = '';
+  if (!sheet.open) {
+    sheetAt = Date.now();
+    try { sheet.showModal(); } catch { sheet.setAttribute('open', ''); }
+    try { sheet.focus({ preventScroll: true }); } catch {}   // the sheet itself, not a ringed close button
+  }
+  sheet.scrollTop = 0;
+}
+function closeSheet() { if (sheet.open) sheet.close(); }
+// A tap outside closes the sheet, but not the click left over from the tap that just opened it
+sheet.addEventListener('click', (e) => { if (e.target === sheet && Date.now() - sheetAt > 450) closeSheet(); });
+sheet.addEventListener('close', () => {
+  sheet.style.transform = '';
+  if (S.promo) { S.promo = null; select(null); render(); }   // closing the piece chooser cancels the move
+});
+const head = (title) => `<div class="grab-zone"><div class="grabber"></div><div class="sheet-head" style="padding:0 22px"><h2 id="sheetTitle">${title}</h2><button class="icon-btn" type="button" data-act="close" aria-label="Close" title="Close">${ICON.x}</button></div></div>`;
+
+// Drag a sheet's handle or title down to close it, or swipe it to the right
+(function sheetGestures() {
+  let g = null;
+  const scrollsSideways = (el) => {
+    for (; el && el !== sheet; el = el.parentElement) {
+      const ox = getComputedStyle(el).overflowX;
+      if ((ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth) return true;
+    }
+    return false;
+  };
+  sheet.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || e.target.closest('input, textarea')) { g = null; return; }
+    const t = e.touches[0];
+    g = { x: t.clientX, y: t.clientY, t: Date.now(), head: !!e.target.closest('.grab-zone'), dir: null, off: 0, target: e.target };
+  }, { passive: true });
+  sheet.addEventListener('touchmove', (e) => {
+    if (!g) return;
+    const t = e.touches[0], dx = t.clientX - g.x, dy = t.clientY - g.y;
+    if (!g.dir) {
+      if (Math.hypot(dx, dy) < 10) return;
+      if (Math.abs(dx) > Math.abs(dy)) g.dir = dx > 0 && !scrollsSideways(g.target) && !(window.getSelection() + '') ? 'right' : 'none';
+      else g.dir = dy > 0 && (g.head || sheet.scrollTop <= 0 && g.head) ? 'down' : 'none';
+      if (g.dir === 'none') { g = null; return; }
+    }
+    e.preventDefault();
+    g.off = Math.max(0, g.dir === 'right' ? dx : dy);
+    if (!reduced()) sheet.style.transform = g.dir === 'right' ? `translateX(${g.off}px)` : `translateY(${g.off}px)`;
+  }, { passive: false });
+  sheet.addEventListener('touchend', () => {
+    if (!g || !g.dir) { g = null; return; }
+    const r = sheet.getBoundingClientRect(), speed = g.off / Math.max(1, Date.now() - g.t);
+    const far = g.dir === 'right' ? g.off > r.width / 3 : g.off > r.height / 4;
+    const dir = g.dir;
+    g = null;
+    if (far || speed > 0.5) {
+      if (reduced()) { closeSheet(); return; }
+      sheet.classList.add('springing');
+      sheet.style.transform = dir === 'right' ? 'translateX(100%)' : 'translateY(100%)';
+      setTimeout(() => { sheet.classList.remove('springing'); closeSheet(); }, 200);
+    } else {
+      sheet.classList.add('springing');
+      sheet.style.transform = '';
+      setTimeout(() => sheet.classList.remove('springing'), 230);
+    }
+  });
+})();
+
+function pips(n) { return [1, 2, 3, 4, 5].map((k) => `<i class="${k <= n ? 'on' : ''}"></i>`).join(''); }
+
+function openNew() {
+  S.ng = S.ng && sheet.open ? S.ng : { mode: S.mode, level: S.level, pick: S.pick };
+  const g = S.ng, playing = !S.st.over && S.pos.moves.length > 0;
+  const body = head('New game') + `
+    <div class="switcher" role="group" aria-label="Who are you playing?">
+      <button type="button" data-ngmode="cpu" aria-pressed="${g.mode === 'cpu'}">Computer</button>
+      <button type="button" data-ngmode="two" aria-pressed="${g.mode === 'two'}">A friend</button>
+    </div>
+    ${g.mode === 'cpu' ? `
+      <h3>Who do you want to play?</h3>
+      <div class="levels" role="group" aria-label="Computer level">${[1, 2, 3, 4, 5].map((L) => `
+        <button class="lvl" type="button" data-nglevel="${L}" aria-pressed="${g.level === L}">
+          <span class="pips" aria-hidden="true">${pips(L)}</span>
+          <span><b>${LEVELS[L].name}<span class="vh">, level ${L}</span></b><small>${esc(LEVELS[L].note)}</small></span>
+        </button>`).join('')}</div>
+      <h3>You play</h3>
+      <div class="chips" role="group" aria-label="Your colour">${[['w', 'White'], ['b', 'Black'], ['r', 'Either']].map(([v, l]) =>
+        `<button class="chip" type="button" data-ngpick="${v}" aria-pressed="${g.pick === v}">${l}</button>`).join('')}</div>
+      <p class="small" style="margin-top:8px">White moves first.</p>`
+    : `
+      <p class="lede">Two players share this phone and take turns. White starts at the bottom.</p>
+      <div class="toggle-row" style="margin-top:12px"><p>Face to face<br><span class="small">Black’s pieces turn round, for playing across a table</span></p>
+        <button class="switch" type="button" role="switch" data-act="face" aria-checked="${!!S.set.face}" aria-label="Face to face"></button></div>`}
+    ${playing ? '<p class="small warn">Starting a new game ends the one you’re playing.</p>' : ''}
+    <div class="actions"><button class="btn primary wide" type="button" data-act="start">Start game</button></div>`;
+  const keep = sheet.open ? sheet.scrollTop : 0;
+  openSheet(body);
+  sheet.scrollTop = keep;
+}
+
+function startGame() {
+  const g = S.ng || { mode: S.mode, level: S.level, pick: S.pick };
+  cancelThinking();
+  clearTimeout(S.endTimer);
+  S.mode = g.mode; S.level = g.level; S.pick = g.pick;
+  S.human = g.pick === 'r' ? (Math.random() < 0.5 ? 'w' : 'b') : g.pick;
+  S.pos = C.fromFen();
+  S.st = C.status(S.pos);
+  select(null);
+  S.ng = null;
+  saveGame();
+  put('started', true);
+  closeSheet();
+  render();
+  toast(S.mode === 'cpu' ? `New game against ${cpuName()}. You’re ${colourName(S.human)}.` : 'New game for two players. White goes first.');
+  computerTurn();
+}
+
+function openPromotion(cands) {
+  S.promo = cands;
+  const c = turn();
+  openSheet(head('Choose a new piece') + `
+    <p class="lede">${S.mode === 'cpu' ? 'Your' : `${colourName(c)}’s`} pawn reached the far side. What should it become?</p>
+    <div class="promo">${['q', 'r', 'b', 'n'].map((t) => `<button class="promo-opt" type="button" data-promo="${t}">${pieceSvg(c + t)}<span>${cap1(PIECE_NAME[t])}</span></button>`).join('')}</div>`);
+}
+
+function openEnd() {
+  const e = endWords();
+  const next = S.mode === 'cpu' && S.level < 5 ? S.level + 1 : 0;
+  let acts;
+  if (e.kind === 'win' && S.mode === 'cpu') {
+    acts = `<button class="btn primary wide" type="button" data-act="again">Play again</button>
+      ${next ? `<button class="btn wide" type="button" data-act="harder">Try ${LEVELS[next].name}, level ${next}</button>` : ''}`;
+  } else if (e.kind === 'lose') {
+    acts = `<button class="btn primary wide" type="button" data-act="undo">Take back</button><button class="btn wide" type="button" data-act="again">Play again</button>`;
+  } else acts = `<button class="btn primary wide" type="button" data-act="again">Play again</button>`;
+  const art = e.kind === 'draw' ? '' : `<div class="end-art">${pieceSvg((S.st.winner || 'w') + 'k')}</div>`;
+  openSheet(head(esc(e.title)) + art + `<p class="lede">${esc(e.text)}</p>
+    <div class="actions stack">${acts}<button class="btn wide" type="button" data-act="close">Look at the board</button></div>`);
+}
+
+function themeGridHtml() {
+  return `<div class="theme-grid">${THEMES.map((t) => `<button class="theme-opt" type="button" data-theme="${t.id}" aria-pressed="${S.set.theme === t.id}">
+      <span class="sw" style="--a:${t.bg};--c:${t.mid};--b:${t.accent}"></span>${t.name}</button>`).join('')}</div>
+    <p class="theme-note">Night red and Amber are gentlest on eyes adjusted to the dark.</p>`;
+}
+
+function openSettings() {
+  openSheet(head('Settings') + `
+    <div class="toggle-row" style="margin-top:10px"><p>Sounds<br><span class="small">Soft clicks for moves, and a little tune for a win</span></p>
+      <button class="switch" type="button" role="switch" data-act="sound" aria-checked="${!!S.set.sound}" aria-label="Sounds"></button></div>
+    <div class="toggle-row"><p>Hints<br><span class="small">Tap a piece: green dots are safe, red dots mean it could be taken there</span></p>
+      <button class="switch" type="button" role="switch" data-act="hints" aria-checked="${!!S.set.hints}" aria-label="Hints"></button></div>
+    <div class="toggle-row"><p>Face to face<br><span class="small">In games with a friend, Black’s pieces turn round for playing across a table</span></p>
+      <button class="switch" type="button" role="switch" data-act="face" aria-checked="${!!S.set.face}" aria-label="Face to face"></button></div>
+    <h3>Colour theme</h3>
+    ${themeGridHtml()}
+    <h3>About</h3>
+    <p class="small">Chess, release 1. Works offline. Your game is saved on this phone, so you can close the app and carry on later.</p>`);
+}
+
+/* ---------- Themes ---------- */
+function setTheme(id) {
+  const t = THEMES.find((x) => x.id === id) || THEMES[0];
+  S.set.theme = t.id; saveSet();
+  if (t.id === 'daylight') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = t.id;
+  document.querySelector('meta[name=theme-color]').setAttribute('content', t.bg);
+  document.querySelectorAll('.theme-opt').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === t.id)));
+}
+
+const POPS = { themes: '#themeBtn' };
+function togglePop(id, open) {
+  const pop = $('#' + id), show = open == null ? pop.hidden : open;
+  if (show) pop.innerHTML = themeGridHtml();
+  pop.hidden = !show;
+  $(POPS[id]).setAttribute('aria-expanded', String(show));
+}
+function closePops() { for (const id in POPS) if (!$('#' + id).hidden) togglePop(id, false); }
+const popOpen = () => Object.keys(POPS).some((id) => !$('#' + id).hidden);
+// With a panel open, a tap anywhere outside it only closes the panel. It never also presses what was underneath.
+document.addEventListener('click', (e) => {
+  if (!popOpen() || e.target.closest('.pop, ' + Object.values(POPS).join(', '))) return;
+  e.preventDefault();
+  e.stopPropagation();
+  closePops();
+}, true);
+
+/* ---------- Notices ---------- */
+function renderNotices() {
+  const out = [], dismissed = get('dismissed', {});
+  if (!standalone && !dismissed.install) {
+    if (S.installEvt) out.push(`<div class="notice"><p>Add Chess to your home screen for one-tap access.</p><button class="link-btn" type="button" data-act="install">Install</button><button class="x" type="button" data-dismiss="install" aria-label="Dismiss">${ICON.x}</button></div>`);
+    else if (isIOS) out.push(`<div class="notice"><p>Add Chess to your Home Screen: tap Share, then Add to Home Screen.</p><button class="x" type="button" data-dismiss="install" aria-label="Dismiss">${ICON.x}</button></div>`);
+  }
+  const html = out.join('');
+  if ($('#notices').innerHTML !== html) $('#notices').innerHTML = html;
+}
+
+/* ---------- Taps ---------- */
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('button, a');
+  if (!t) return;
+  const d = t.dataset;
+  if (d.d != null && t.classList.contains('sq')) {
+    // already handled as a tap, unless this click came from the keyboard or a screen reader
+    if (swallowClick || (+d.d === tapD && Date.now() - tapAt < 700)) return;
+    onSquare(disp(+d.d));
+    return;
+  }
+  if (d.theme) { setTheme(d.theme); return; }
+  if (d.ngmode) { S.ng.mode = d.ngmode; openNew(); return; }
+  if (d.nglevel) { S.ng.level = +d.nglevel; t.parentElement.querySelectorAll('.lvl').forEach((b) => b.setAttribute('aria-pressed', String(b === t))); return; }
+  if (d.ngpick) { S.ng.pick = d.ngpick; t.parentElement.querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', String(b === t))); return; }
+  if (d.promo) {
+    const m = S.promo && S.promo.find((x) => 'pnbrqk'[C.promo(x) - 1] === d.promo);
+    S.promo = null;
+    closeSheet();
+    if (m) playMove(m);
+    return;
+  }
+  if (d.dismiss) { const x = get('dismissed', {}); x[d.dismiss] = 1; put('dismissed', x); renderNotices(); return; }
+  switch (d.act) {
+    case 'close': closeSheet(); break;
+    case 'start': startGame(); break;
+    case 'again': S.ng = { mode: S.mode, level: S.level, pick: S.pick }; startGame(); break;
+    case 'harder': S.ng = { mode: 'cpu', level: Math.min(5, S.level + 1), pick: S.pick }; startGame(); break;
+    case 'undo': takeBack(); break;
+    case 'sound': case 'hints': case 'face': {
+      S.set[d.act] = !S.set[d.act]; saveSet();
+      document.querySelectorAll(`.switch[data-act=${d.act}]`).forEach((b) => b.setAttribute('aria-checked', String(S.set[d.act])));
+      if (d.act === 'sound' && S.set.sound) { audio(); sound('move'); }
+      if (d.act === 'hints') select(S.sel);
+      render();
+      break;
+    }
+    case 'install':
+      if (S.installEvt) { S.installEvt.prompt(); S.installEvt = null; renderNotices(); }
+      break;
+  }
+});
+
+$('#undoBtn').addEventListener('click', takeBack);
+$('#newBtn').addEventListener('click', () => { S.ng = null; openNew(); });
+$('#hintBtn').addEventListener('click', () => {
+  S.set.hints = !S.set.hints; saveSet();
+  select(S.sel);
+  render();
+  toast(S.set.hints ? 'Hints on. Tap a piece to see safe squares.' : 'Hints off');
+});
+$('#settingsBtn').addEventListener('click', () => { closePops(); openSettings(); });
+$('#themeBtn').addEventListener('click', () => togglePop('themes'));
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  for (const id in POPS) if (!$('#' + id).hidden) { togglePop(id, false); $(POPS[id]).focus(); }
+});
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); S.installEvt = e; renderNotices(); });
+
+/* ---------- Start ---------- */
+(function start() {
+  setTheme(S.set.theme);
+  const g = get('game', null);
+  if (g && Array.isArray(g.moves)) {
+    S.mode = g.mode === 'two' ? 'two' : 'cpu';
+    S.level = Math.min(5, Math.max(1, +g.level || 2));
+    S.human = g.human === 'b' ? 'b' : 'w';
+    S.pick = ['w', 'b', 'r'].includes(g.pick) ? g.pick : S.human;
+  }
+  try { S.pos = C.fromMoves(g && g.moves); } catch { S.pos = C.fromFen(); }
+  S.st = C.status(S.pos);
+  render();
+  if (!get('started', false)) { S.ng = null; openNew(); }
+  else computerTurn();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+})();
+</script>
+</body>
+</html>
